@@ -3,7 +3,7 @@ import { FaImages } from 'react-icons/fa';
 import { imageUpload } from "../imageUpload";
 
 function ImagesContainer() {
-  const [selectAll, setSelectAll] = useState(false);
+
   const [count, setCount] = useState(0);
   const [uploadImage, setUploadImage] = useState("Add Images");
   // ===================================
@@ -89,9 +89,9 @@ function ImagesContainer() {
   ]; // Example initial cart items
   const [cartItems, setCartItems] = useState(initialCartItems);
   const handleCheckboxChange = (itemId) => {
-    console.log(itemId);
+   
      cartItems.map((countItem) => {
-      // console.log(countItem);
+    
       if (countItem.id === itemId) {
         if (countItem.isChecked) {
           setCount(count - 1);
@@ -106,7 +106,7 @@ function ImagesContainer() {
     );
 
     setCartItems(newCartItems);
-    setSelectAll(newCartItems.every((item) => item.isChecked));
+   
   };
 
 
@@ -114,18 +114,11 @@ function ImagesContainer() {
   const handleDeleteAllChecked = () => {
     const newCartItems = cartItems.filter((item) => !item.isChecked);
     setCartItems(newCartItems);
-    setSelectAll(false);
+   
+    setCount(0);
   };
 
-  const handleSelectAllChange = () => {
-    const newSelectAll = !selectAll;
-    const newCartItems = cartItems.map((item) => ({
-      ...item,
-      isChecked: newSelectAll,
-    }));
-    setCartItems(newCartItems);
-    setSelectAll(newSelectAll);
-  };
+
 
 
 
@@ -199,7 +192,7 @@ function ImagesContainer() {
   }
 
   return (
-    <div className="w-[80%] pb-4 my-5 rounded-md drop-shadow-md bg-white  mx-auto h-[100vh] relative border">
+    <div className="lg:w-[80%] mx-2  pb-4 my-5 rounded-md drop-shadow-md bg-white  lg:mx-auto  relative border">
       
       {
         (count>0)?
@@ -209,8 +202,8 @@ function ImagesContainer() {
             <label className="bg-white">
               <input
                 type="checkbox"
-                checked={selectAll}
-                onChange={handleSelectAllChange}
+                defaultChecked
+                
               />
             </label>
             <span className=" bg-white pl-2">{count}</span> Filed Selection
@@ -231,7 +224,7 @@ function ImagesContainer() {
         </div>
       }
       <hr />
-      <div className="grid grid-cols-5 absolute bg-white p-2 rounded-md gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5  absolute bg-white p-2 rounded-md gap-2">
         {/* ======================================= */}
 
         {cartItems.map((todo, index) => (
@@ -253,8 +246,9 @@ function ImagesContainer() {
             >
               <div className="relative cursor-pointer overflow-hidden bg-cover bg-no-repeat border rounded-md">
                 <img src={todo.name}></img>
+
                 {todo.isChecked ? (
-                  <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-[#6f6f6f] opacity-0 transition duration-300 ease-in-out opacity-70">
+                  <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-[#6f6f6f]  transition duration-300 ease-in-out opacity-30">
                     <input
                       type="checkbox"
                       checked={todo.isChecked}
@@ -284,7 +278,7 @@ function ImagesContainer() {
            
             <form>
               <div className="flex  justify-center items-center cursor-pointer
-               text-white border  border-dashed w-full h-full border-gray-300 rounded font-semibold  lg:py-16 px-3">
+               text-white border  border-dashed w-full h-full border-gray-300 rounded font-semibold py-8 md:py-11 lg:py-14 px-3">
                 <label>
                   <input
                     onChange={(event) => {
@@ -297,14 +291,16 @@ function ImagesContainer() {
                     accept="image/*"
                     hidden
                   />
+                  <div className="py-4 lg:py-0">
                   <div className="flex justify-center items-center cursor-pointer">
                  
-                    <FaImages className="text-5xl text-slate-700"/>
-               
+                 <FaImages className="text-5xl text-slate-700"/>
+            
+               </div>
+               <div className="text-black cursor-pointer">
+                 
+                 {uploadImage}</div>
                   </div>
-                  <div className="text-black cursor-pointer">
-                    
-                    {uploadImage}</div>
                 </label>
               </div>
             </form>
