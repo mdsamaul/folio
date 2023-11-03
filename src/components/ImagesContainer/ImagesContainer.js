@@ -278,7 +278,7 @@ function ImagesContainer() {
            
             <form>
               <div className="flex  justify-center items-center cursor-pointer
-               text-white border  border-dashed w-full h-full border-gray-300 rounded font-semibold py-8 md:py-11 lg:py-14 px-3">
+               text-white border  border-dashed w-full h-full border-gray-300 rounded font-semibold py-8 md:py-14 lg:py-16 px-3">
                 <label>
                   <input
                     onChange={(event) => {
