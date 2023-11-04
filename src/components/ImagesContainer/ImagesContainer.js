@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
-import { FaImages } from 'react-icons/fa';
+import { FaImages } from "react-icons/fa";
 import { imageUpload } from "../imageUpload";
 
 function ImagesContainer() {
-
   const [count, setCount] = useState(0);
   const [uploadImage, setUploadImage] = useState("Add Images");
-  // ===================================
+  // ================all gallery images array of object
 
   const initialCartItems = [
     {
@@ -86,12 +85,12 @@ function ImagesContainer() {
       isDragging: false,
       isChecked: false,
     },
-  ]; // Example initial cart items
+  ];
   const [cartItems, setCartItems] = useState(initialCartItems);
+
+  // handle check box change function and count this images increment and decrement
   const handleCheckboxChange = (itemId) => {
-   
-     cartItems.map((countItem) => {
-    
+    cartItems.map((countItem) => {
       if (countItem.id === itemId) {
         if (countItem.isChecked) {
           setCount(count - 1);
@@ -106,49 +105,38 @@ function ImagesContainer() {
     );
 
     setCartItems(newCartItems);
-   
   };
 
-
-
+  // all selection images oneclick delete
   const handleDeleteAllChecked = () => {
     const newCartItems = cartItems.filter((item) => !item.isChecked);
     setCartItems(newCartItems);
-   
+
     setCount(0);
   };
 
-
-
-
-
+  // uploading images
   const handleImageChange = (image) => {
+    // call a image upload from imgbb
+    imageUpload(image).then((data) => {
+      const urlImages = data.data.display_url;
 
-    imageUpload(image)
-      .then(data => {
-     
-       const urlImages=data.data.display_url;
-     
-       const newItem = {
+      const newItem = {
         id: cartItems.length + 1,
         name: urlImages,
         isChecked: false,
       };
       setCartItems([...cartItems, newItem]);
-
-
-        
-  })
-   
+    });
   };
 
-  let todoItemDrag = useRef();
-  let todoItemDragOver = useRef();
-  function D_Start(e, index) {
-    todoItemDrag.current = index;
-  }
-  function D_Enter(e, index) {
-    todoItemDragOver.current = index;
+  let imageItemDrag = useRef();
+  let imageItemDragOver = useRef();
+  const D_Start = (e, index) => {
+    imageItemDrag.current = index;
+  };
+  const D_Enter = (e, index) => {
+    imageItemDragOver.current = index;
 
     const cpArr = [...cartItems];
 
@@ -166,17 +154,17 @@ function ImagesContainer() {
     finalArr[index].isDragging = true;
 
     setCartItems(finalArr);
-  }
+  };
 
-  function D_End(e, index) {
+  const D_End = (e, index) => {
     const arr1 = [...cartItems];
 
-    const todo_item_main = arr1[todoItemDrag.current];
-    arr1.splice(todoItemDrag.current, 1);
-    arr1.splice(todoItemDragOver.current, 0, todo_item_main);
+    const image_item_main = arr1[imageItemDrag.current];
+    arr1.splice(imageItemDrag.current, 1);
+    arr1.splice(imageItemDragOver.current, 0, image_item_main);
 
-    todoItemDrag.current = null;
-    todoItemDragOver.current = null;
+    imageItemDrag.current = null;
+    imageItemDragOver.current = null;
 
     let f_arr = [];
 
@@ -189,45 +177,42 @@ function ImagesContainer() {
     });
 
     setCartItems(f_arr);
-  }
+  };
 
   return (
+    // all images gallery section
     <div className="lg:w-[80%] mx-2  pb-4 my-5 rounded-md drop-shadow-md bg-white  lg:mx-auto  relative border">
-      
-      {
-        (count>0)?
+      {/* conditionaly handel on selection one or more images and count this item */}
+      {count > 0 ? (
         <div className="p-5 h-20 flex justify-between items-center rounded-md bg-white ">
-        <div>
-          <h3  className="rounded-none bg-white text-slate-800 font-bold">
-            <label className="bg-white">
-              <input
-                type="checkbox"
-                defaultChecked
-                
-              />
-            </label>
-            <span className=" bg-white pl-2">{count}</span> Filed Selection
-                   </h3>
+          <div>
+            <h3 className="rounded-none bg-white text-slate-800 font-bold">
+              <label className="bg-white">
+                <input type="checkbox" defaultChecked />
+              </label>
+              <span className=" bg-white pl-2">{count}</span> Filed Selection
+            </h3>
+          </div>
+          <div>
+            <button
+              onClick={handleDeleteAllChecked}
+              className="rounded-none bg-white text-red-800 font-semibold"
+            >
+              Delete files
+            </button>
+          </div>
         </div>
-        <div>
-          <button
-            onClick={handleDeleteAllChecked}
-            className="rounded-none bg-white text-red-800 font-semibold"
-          >
-            Delete files
-          </button>
-        </div>
-      </div>
-        :
+      ) : (
         <div className="p-5 rounded-md h-20 flex justify-between items-center  bg-white">
           <h3 className="bg-white text-xl  font-bold">Gallery</h3>
         </div>
-      }
+      )}
       <hr />
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5  absolute bg-white p-2 rounded-md gap-2">
+      {/* only images container */}
+      <div className="grid grid-cols-2 md:grid-cols-4 py-5 lg:grid-cols-5  absolute bg-white p-2 rounded-md gap-2">
         {/* ======================================= */}
 
-        {cartItems.map((todo, index) => (
+        {cartItems.map((image, index) => (
           <div
             key={index}
             className={`bg-white ${index === 0 ? "col-span-2 row-span-2" : ""}`}
@@ -239,20 +224,20 @@ function ImagesContainer() {
               onDragEnter={(e) => D_Enter(e, index)}
               onDragEnd={(e) => D_End(e, index)}
               style={{
-                textDecoration: todo.complete ? "line-through" : "none",
-                background: todo.complete ? "bg-[#6f6f6f]" : null,
+                textDecoration: image.complete ? "line-through" : "none",
+                background: image.complete ? "bg-[#6f6f6f]" : null,
               }}
               className="bg-white border rounded-md p-0.5"
             >
               <div className="relative cursor-pointer overflow-hidden bg-cover bg-no-repeat border rounded-md">
-                <img src={todo.name}></img>
-
-                {todo.isChecked ? (
+                <img src={image.name}></img>
+                {/* checkbox and count this image */}
+                {image.isChecked ? (
                   <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-[#6f6f6f]  transition duration-300 ease-in-out opacity-30">
                     <input
                       type="checkbox"
-                      checked={todo.isChecked}
-                      onChange={() => handleCheckboxChange(todo.id)}
+                      checked={image.isChecked}
+                      onChange={() => handleCheckboxChange(image.id)}
                       value=""
                       className="w-4 h-4 m-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
@@ -261,8 +246,8 @@ function ImagesContainer() {
                   <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-[#6f6f6f] opacity-0 transition duration-300 ease-in-out hover:opacity-70">
                     <input
                       type="checkbox"
-                      checked={todo.isChecked}
-                      onChange={() => handleCheckboxChange(todo.id)}
+                      checked={image.isChecked}
+                      onChange={() => handleCheckboxChange(image.id)}
                       value=""
                       className="w-4 h-4 m-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
@@ -272,39 +257,30 @@ function ImagesContainer() {
             </div>
           </div>
         ))}
-
-        <div>
-          <div>
-           
-            <form>
-              <div className="flex  justify-center items-center cursor-pointer
-               text-white border  border-dashed w-full h-full border-gray-300 rounded font-semibold py-8 md:py-14 lg:py-16 px-3">
-                <label>
-                  <input
-                    onChange={(event) => {
-                      handleImageChange(event.target.files[0]);
-                    }}
-                    className="text-sm w-full h-full cursor-pointer hidden"
-                    type="file"
-                    name="image"
-                    id="image"
-                    accept="image/*"
-                    hidden
-                  />
-                  <div className="py-4 lg:py-0">
-                  <div className="flex justify-center items-center cursor-pointer">
-                 
-                 <FaImages className="text-5xl text-slate-700"/>
-            
-               </div>
-               <div className="text-black cursor-pointer">
-                 
-                 {uploadImage}</div>
-                  </div>
-                </label>
+        {/* upload images */}
+        <div
+          className="flex  justify-center items-center cursor-pointer
+               text-white border  border-dashed w-full h-full border-gray-300 rounded font-semibold py-8 md:py-14 lg:py-16 px-3"
+        >
+          <label>
+            <input
+              onChange={(event) => {
+                handleImageChange(event.target.files[0]);
+              }}
+              className="text-sm w-full h-full cursor-pointer hidden"
+              type="file"
+              name="image"
+              id="image"
+              accept="image/*"
+              hidden
+            />
+            <div className="py-4 lg:py-0">
+              <div className="flex justify-center items-center cursor-pointer">
+                <FaImages className="text-5xl text-slate-700" />
               </div>
-            </form>
-          </div>
+              <div className="text-black cursor-pointer">{uploadImage}</div>
+            </div>
+          </label>
         </div>
       </div>
     </div>
